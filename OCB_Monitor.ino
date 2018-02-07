@@ -1,30 +1,4 @@
 //monitor.println("123456789012345678901234567890123456789");   // fonte 10 x 14 pixels
-///////////////////////
-// Prepara o Monitor //
-///////////////////////
-void preparaMonitor() 
-{  
-  monitor.reset();                                // Reinicia o Monitor
-  monitor.begin(vg_identifier);                   // Inicializa Monitor 
-  monitor.setRotation(1);                         // Ajusta o monitor para ficar alinhado na vertical
-
-  int16_t vcolMin = 0;
-  int16_t vlinMin = 0;
-  int16_t vcolMax = monitor.width();  // 480
-  int16_t vlinMax = monitor.height(); // 320
-
-  monitor.fillScreen(BLACK);                      // Preenche monitor com Preto
-
-  // Desenha cabecalho
-  monitor.fillRect(vcolMin, vlinMin   , vcolMax, 25, BLUE);   
-  monitor.fillRect(vcolMin, vlinMin+25, vcolMax, 1, DARKGREY);   
-  monitor.fillRect(vcolMin, vlinMin+26, vcolMax, 1, WHITE);   
-  monitor.fillRect(vcolMin, vlinMin+27, vcolMax, 1, DARKGREY);   
-  monitor.fillRect(vcolMin, vlinMin+28, vcolMax, 5, BLUE);   
-
-  // Desenha Rodape
-  monitor.fillRect(vcolMin, vlinMax-25, vcolMax, 25, BLUE);
-} 
 //////////////////////////////////////////////////////
 // Rotina de Apresenta os Sensores de Monitoramento //
 //////////////////////////////////////////////////////
@@ -64,7 +38,7 @@ void apresentaMonitor()
   // Monta Paineis
  // monitor.fillRect(vcolMin, vlinMin, 120, vlinMed-vlinMin, DARKGREY);
   
-  while (!digitalRead(pinobotaoModo))
+  while (true)
   {
     monitor.setFont(&Org_01);  
     monitor.setTextSize(2);

@@ -1,24 +1,34 @@
-///////////////////////
-// Introducao do OCB //
-///////////////////////
-void telaIntroducao()  // Tela 1 - Introducao
+///////////////////////////////
+// Inicialização do Monitor  //
+///////////////////////////////
+void iniciaTFT() 
 {
-  int vcol = 25;
-  int vlin = 0;
-  monitor.fillScreen(WHITE);
-/*  
-  monitor.fillRect(20,20,monitor.width()-40,monitor.height()-40,WHITE);   
-  monitor.setTextSize(2);
-  monitor.setTextColor(BLUE);  
-  monitor.setCursor(vcol, 40);
-  monitor.println( "OnBoard");  
-  monitor.setCursor(vcol, 100);
-  monitor.println( "Computer");  
-  monitor.setCursor(vcol, 160);
-  monitor.println( "Beetle");  
-*/
- //delay(5000);
-}  
+#ifdef DEBUG
+  Serial.print("Inicializando monitor..... ");
+#endif  
+  monitor.reset();                                // Reinicia o Monitor
+  monitor.begin(vg_identifier);                   // Inicializa Monitor 
+  monitor.setRotation(1);                         // Ajusta o monitor para ficar alinhado na horizontal
+#ifdef DEBUG
+  Serial.println("OK!");
+#endif  
+}
+
+///////////////////////
+// Prepara o Monitor //
+///////////////////////
+void preparaMonitor() 
+{  
+  // Desenha cabecalho
+  monitor.fillRect(0,  0, monitor.width(), 25, BLUE);   
+  monitor.fillRect(0, 25, monitor.width(),  1, DARKGREY);   
+  monitor.fillRect(0, 26, monitor.width(),  1, WHITE);   
+  monitor.fillRect(0, 27, monitor.width(),  1, DARKGREY);   
+  monitor.fillRect(0, 28, monitor.width(),  5, BLUE);   
+
+  // Desenha Rodape
+  monitor.fillRect(0, monitor.height()-25, monitor.width(), 25, BLUE); 
+} 
 ///////////////////
 // Imprime Texto //
 ///////////////////
@@ -50,52 +60,6 @@ void imprimeTexto(String pTexto, String pAlinhamento, int pLinha)
 ////////////////////////////////////////////////////////////////
 void limpaArea()
 {
-  int16_t vcolMin = 0;
-  int16_t vlinMin = 0;
-  int16_t vcolMax = monitor.width();
-  int16_t vlinMax = monitor.height();
-  
   // Limpa a area util
-  monitor.fillRect(vcolMin, vlinMin+33, vcolMax, 262, BLACK);  
-  
+  monitor.fillRect(0, 33,  monitor.width(), monitor.height()-58, BLACK);  
 }
-
-/////////////////////////////////////////////////////////////
-// Monitor Termometro Generico                             //
-// p_titulo      - Titulo do Termometro (3 ou 4 caracteres // 
-// p_valor       - Valor de medicao representado em branco //
-// p_tamanho     - Tamanho termometro repres. cinza claro  //
-// p_referencia  - Vlr limite para pintar de vermelho      //
-// p_col_baixo   - coluna de baixo para inicio termometro  //
-// p_lin_baixo   - linha de baixo do termometro            //
-/////////////////////////////////////////////////////////////
-void mostraTermometro(String p_titulo, int16_t p_valor, int16_t p_tamanho, int16_t p_referencia, int16_t p_col_baixo, int16_t p_lin_baixo, int16_t p_largura )
-{
-  int16_t _lin = p_lin_baixo;
-  int16_t _cor = WHITE;
-  int16_t _passo = 15;
-
-  monitor.setTextSize(2);
-  int16_t _linTit = p_col_baixo - (((p_titulo.length()*12) - p_largura-6) / 2);
-  monitor.setCursor(_linTit, _lin);
-  monitor.println(p_titulo);
- 
-  _lin   = _lin - 15;
-  _passo = 15 / p_tamanho;
-  for (byte i = 0; i < 15; i++)   
-  {
-    if (i < p_valor) 
-      if ( i >= p_referencia )
-         _cor = RED;
-      else
-         _cor = WHITE;
-    else
-       _cor = LIGHTGREY;
-    monitor.fillRect( p_col_baixo, _lin-_passo, p_largura, 10, _cor);
-    monitor.drawFastHLine(p_col_baixo, _lin-_passo, p_largura+5, WHITE);
-    _lin-=10;
-  }
-}
-
-
-
