@@ -13,7 +13,6 @@ void apresentaMonitor()
   int16_t vcolDis = vcolMin;
 
   //=================== Intervalos em (ms) ======== 
-  const unsigned long _IntervalTemperatura = 5000; 
   const unsigned long _IntervalBateria     = 5000; 
   const unsigned long _IntervalHallmeter   = 50; 
   const unsigned long _IntervalCombustivel = 3000;  
@@ -21,12 +20,11 @@ void apresentaMonitor()
   const unsigned long _IntervalGPS         = 5000;  
   const unsigned long _IntervalRPM         = 50;  
   const unsigned long _IntervalKMH         = 50;  
-  const unsigned long _IntervalBussola     = 50;  
   //=================== Timers ====================
-  unsigned long       _timerTemperatura, _timerBateria, _timerHallmeter, _timerCombustivel, _timerOleo, _timerGPS, _timerRPM, _timerKMH , _timerBussola= millis();
+  unsigned long       _timerBateria, _timerHallmeter, _timerCombustivel, _timerOleo, _timerGPS, _timerRPM, _timerKMH = millis();
   //=================== Variaveis =================
-  float               _tempInt, _tempExt, _tensao, _corrente, _nivelOxig, _combustivel, _tempOleo, _pressOleo, _valorRPM, _valorKMH = 0;
-
+  float                _tensao, _corrente, _nivelOxig, _combustivel, _tempOleo, _pressOleo, _valorRPM, _valorKMH = 0;
+  
   limpaArea();
 
   // Monta a grade do monitor
@@ -46,7 +44,7 @@ void apresentaMonitor()
 ////////////////////////////////////////// Temperatura
     vlinDis = vlinMin;
     vcolDis = vcolMin;
-    if ((millis() - _timerTemperatura) >= _IntervalTemperatura) {  
+/*    if ((millis() - _timerTemperatura) >= _IntervalTemperatura) {  
       _tempInt = getTemp_DS18S20();
       _tempExt = getTemp_NTC10k();
       monitor.setTextColor(WHITE, BLACK);  
@@ -64,21 +62,33 @@ void apresentaMonitor()
       monitor.setCursor(vcolDis+65 , vlinDis+120);  monitor.print(v_temp_max,0); monitor.print("C");
       _timerTemperatura = millis();
     }
-    
+*/    
 ////////////////////////////////////////// Bateria
     vcolDis = vcolMin+120;   
     if ((millis() - _timerBateria) >= _IntervalBateria) {  
-      _tensao = getTensao(pinoTensao);
-      _corrente = getCorrente(pinoCorrente);    
+
+      _tensao         = ina219.getBusVoltage_V();
+      _corrente       = ina219.getCurrent_mA(); 
+      
+      vg_shuntvoltage = ina219.getShuntVoltage_mV();
+      vg_loadvoltage  = _tensao + (vg_shuntvoltage / 1000);
+      
+      
+#ifdef DEBUG  
+      Serial.print("Bus Voltage:   "); Serial.print(_tensao); Serial.println(" V");
+      Serial.print("Shunt Voltage: "); Serial.print(vg_shuntvoltage); Serial.println(" mV");
+      Serial.print("Load Voltage:  "); Serial.print(vg_loadvoltage); Serial.println(" V");
+      Serial.print("Corrente:      "); Serial.print(_corrente); Serial.println(" mA");
+#endif
       
       monitor.setTextColor(WHITE, BLACK);     
-      monitor.setCursor(vcolDis    , vlinDis+10 );  monitor.print( "  Bateria" );  
+      monitor.setCursor(vcolDis    , vlinDis+10 );  monitor.print( "  Consumo" );  
       monitor.setCursor(vcolDis+70 , vlinDis+75 );  monitor.print( " V" );
-      monitor.setCursor(vcolDis+70 , vlinDis+100);  monitor.print( " A" ); 
+      monitor.setCursor(vcolDis+70 , vlinDis+100);  monitor.print( " mA" ); 
       monitor.fillRect (vcolDis+1  , vlinDis+63, 78, 50, BLACK);
       monitor.setTextColor(LIGHTGREY, BLACK);      
-      monitor.setCursor(vcolDis+15 , vlinDis+75 );   monitor.print(_tensao,1 ); 
-      monitor.setCursor(vcolDis+15 , vlinDis+100 );  monitor.print(_corrente,1 ); 
+      monitor.setCursor(vcolDis+15 , vlinDis+75 );   monitor.print(_tensao,2 ); 
+      monitor.setCursor(vcolDis+15 , vlinDis+100 );  monitor.print(_corrente,2 ); 
       _timerBateria = millis();
     }
 ////////////////////////////////////////// Hallmeter    
@@ -147,22 +157,23 @@ void apresentaMonitor()
 
 ////////////////////////////////////////// Bussola
     vcolDis = vcolMin+240;   
-    if ((millis() - _timerBussola) >= _IntervalBussola) {  
+/*    if ((millis() - _timerBussola) >= _IntervalBussola) {  
       
       monitor.setTextColor(WHITE, BLACK);     
-      monitor.setCursor(vcolDis    , vlinDis+10 );  monitor.print( "xxxxx" );  
-      monitor.setCursor(vcolDis+20 , vlinDis+30 );  monitor.print( "X:" );
-      monitor.setCursor(vcolDis+20 , vlinDis+50 );  monitor.print( "Y:" );
-      monitor.setCursor(vcolDis+20 , vlinDis+70 );  monitor.print( "Z:" );
-      monitor.setCursor(vcolDis+10  , vlinDis+100);  monitor.print("xxxxx");
+      monitor.setCursor(vcolDis    , vlinDis+10 );  monitor.print( " " );  
+      monitor.setCursor(vcolDis+20 , vlinDis+30 );  monitor.print( "" );
+      monitor.setCursor(vcolDis+20 , vlinDis+50 );  monitor.print( "" );
+      monitor.setCursor(vcolDis+20 , vlinDis+70 );  monitor.print( "" );
+      monitor.setCursor(vcolDis+10  , vlinDis+100);  monitor.print("");
       monitor.setTextColor(LIGHTGREY, BLACK); 
-      monitor.setCursor(vcolDis+60 , vlinDis+30 );  monitor.print( 0 );
-      monitor.setCursor(vcolDis+60 , vlinDis+50 );  monitor.print( 0 );
-      monitor.setCursor(vcolDis+60 , vlinDis+70 );  monitor.print( 0 );
-      monitor.setCursor(vcolDis+10 , vlinDis+115);  monitor.print(0);
+
+      monitor.setCursor(vcolDis+60 , vlinDis+30 );  monitor.print( 0, 2 );
+      monitor.setCursor(vcolDis+60 , vlinDis+50 );  monitor.print( 0, 2 );
+      monitor.setCursor(vcolDis+60 , vlinDis+70 );  monitor.print( 0, 2 );
+      monitor.setCursor(vcolDis+10 , vlinDis+115);  monitor.print((_heading * 180/M_PI),6);
       _timerBussola = millis();          
     }
-
+*/
 ////////////////////////////////////////// KM/h
     vcolDis = vcolMin+360;   
     if ((millis() - _timerKMH) >= _IntervalKMH) {  

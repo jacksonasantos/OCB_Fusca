@@ -28,6 +28,9 @@ void preparaMonitor()
 
   // Desenha Rodape
   monitor.fillRect(0, monitor.height()-25, monitor.width(), 25, BLUE); 
+
+  limpaArea();
+
 } 
 ///////////////////
 // Imprime Texto //

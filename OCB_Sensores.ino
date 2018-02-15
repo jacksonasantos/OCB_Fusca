@@ -56,72 +56,6 @@ float getNivelOxigenio(uint8_t pinoOxig)
   _lambdaAFR= _lambdaAFR>>2;
   return _lambdaAFR;
 }
-/////////////////////////////////////////////////////////////
-// Retorna a temperatura do sensor NTC10k em Graus Celcius //
-/////////////////////////////////////////////////////////////
-float getTemp_NTC10k(){
-  float _sensorNTC10k = tempNTC10k.getTemp() ;              // leitura do valor do sensor analogico
-
-  //v_temp_Read = v_temp_Read  * 0.0488;
-  if (_sensorNTC10k >= v_temp_max)	                     // Gera os valores minimos e maximos
-  {
-    v_temp_max = _sensorNTC10k;
-  }
-  if (_sensorNTC10k <= v_temp_min)
-  {
-    v_temp_min = _sensorNTC10k;
-  }  
-#ifdef DEBUG  
-  Serial.print(" Temp Ext: Pino(");Serial.print(" ");Serial.print(") ");Serial.print(_sensorNTC10k);Serial.println ("°C");
-#endif    
-  return (_sensorNTC10k);
-}
-//////////////////////////////////////////////////////////////
-// Retorna a temperatura do sensor DS18S20 em Graus Celcius //
-//////////////////////////////////////////////////////////////
-float getTemp_DS18S20(){
-  byte data[12];
-  byte addr[8];
-
-  if ( !tempDS18S20.search(addr)) {       // no more sensors on chain, reset search
-      tempDS18S20.reset_search();
-      return -99;
-  }
-  if ( OneWire::crc8( addr, 7) != addr[7]) {
-#ifdef DEBUG    
-      Serial.println("CRC is not valid!");
-#endif
-      return -99;
-  }
-  if ( addr[0] != 0x10 && addr[0] != 0x28) {
-#ifdef DEBUG    
-      Serial.print("Device is not recognized");
-#endif
-      return -99;
-  }
-  tempDS18S20.reset();
-  tempDS18S20.select(addr);
-  tempDS18S20.write(0x44,1);     // start conversion, with parasite power on at the end
-
-  byte present = tempDS18S20.reset();
-  tempDS18S20.select(addr);    
-  tempDS18S20.write(0xBE);       // Read Scratchpad
-  
-  for (int i = 0; i < 9; i++) { // we need 9 bytes
-    data[i] = tempDS18S20.read();
-  }
-  
-  tempDS18S20.reset_search();
-  
-  byte  MSB      = data[1];
-  byte  LSB      = data[0];
-  int   tempRead = ((MSB << 8) | LSB); //using two's compliment
-  float   TempSum  = tempRead / 16;
-#ifdef DEBUG  
-  Serial.print(" Temp Int: Pino(");Serial.print(" ");Serial.print(") ");Serial.print(TempSum);Serial.println ("°C");
-#endif   
-  return TempSum;
-}
 ////////////////////////////////////////////////////////
 // Retorna a voltagem de um pino de leitura Analogico //
 ////////////////////////////////////////////////////////
@@ -142,7 +76,7 @@ float getTensao(uint8_t pinoTensao){
 ////////////////////////////////////////////////////////
 float getCorrente(uint8_t pinoCorrente){
 
-  float _aRef    = 111.1;                   // Valor para Calibragem
+/*  float _aRef    = 111.1;                   // Valor para Calibragem
   
   emon1.current(pinoCorrente, _aRef);       // Current: input pin, calibration.
 
@@ -159,5 +93,6 @@ float getCorrente(uint8_t pinoCorrente){
 //  float supplyVoltage   = emon1.Vrms;             //extract Vrms into Variable
 #endif  
     return _corrente;
+*/
 }
 
