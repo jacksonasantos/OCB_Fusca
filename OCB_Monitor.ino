@@ -66,7 +66,7 @@ void apresentaMonitor()
 ////////////////////////////////////////// Bateria
     vcolDis = vcolMin+120;   
     if ((millis() - _timerBateria) >= _IntervalBateria) {  
-
+/*
       _tensao         = ina219.getBusVoltage_V();
       _corrente       = ina219.getCurrent_mA(); 
       
@@ -87,8 +87,9 @@ void apresentaMonitor()
       monitor.setCursor(vcolDis+70 , vlinDis+100);  monitor.print( " mA" ); 
       monitor.fillRect (vcolDis+1  , vlinDis+63, 78, 50, BLACK);
       monitor.setTextColor(LIGHTGREY, BLACK);      
-      monitor.setCursor(vcolDis+15 , vlinDis+75 );   monitor.print(_tensao,2 ); 
-      monitor.setCursor(vcolDis+15 , vlinDis+100 );  monitor.print(_corrente,2 ); 
+      monitor.setCursor(vcolDis+10 , vlinDis+75 );   monitor.print(_tensao,2 ); 
+      monitor.setCursor(vcolDis+10 , vlinDis+100 );  monitor.print(_corrente,2 ); 
+*/
       _timerBateria = millis();
     }
 ////////////////////////////////////////// Hallmeter    
@@ -98,7 +99,7 @@ void apresentaMonitor()
       monitor.setTextColor(WHITE, BLACK);     
       monitor.setCursor(vcolDis    , vlinDis+10 );  monitor.print( " Hallmeter" );  
       monitor.setCursor(vcolDis+50 , vlinDis+100);  monitor.print( "mV" );
-      monitor.fillRect(vcolDis+7,vlinDis+45,90,45,BLACK);
+      monitor.fillRect(vcolDis+7,vlinDis+49,90,45,BLACK);
       monitor.setTextColor(LIGHTGREY, BLACK);      
       monitor.setCursor(vcolDis+50 , vlinDis+75 );  monitor.print( _nivelOxig,0 ); 
       int x = map(_nivelOxig,0,20,1,10);

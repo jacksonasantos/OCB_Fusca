@@ -32,8 +32,6 @@ float                     v_colAnte      = 0;
 
 double                    HOME_LAT       = -30.011997;          // Latitude da Casa
 double                    HOME_LON       = -51.182666;          // Longitude da Casa
-const int                 ON             = 1;                   // Estado on - Ligado
-const int                 OFF            = 0;                   // Estado off - Desligado
 const int                 INA_addr       = 0x40;                // Endereço I2C do INA219 
 
                                                              // Configuracao das Portas 
